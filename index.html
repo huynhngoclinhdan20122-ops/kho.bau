@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TÌM KHO BÁU - HÒM ĐẢO BÍ MẬT</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Container game chuẩn tỉ lệ ảnh gốc */
+    #game-container {
+      position: relative;
+      width: 100vw;
+      max-width: 900px;
+      height: calc(100vw * (728 / 900));
+      max-height: 728px;
+      background: url('background.jpg') no-repeat center center/contain;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    /* Thẻ hiển thị Coin */
+    .coin-board {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(0, 0, 0, 0.65);
+      border: 2px solid #ffd700;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+
+    /* Bảng thanh điều khiển nhạc & sửa game */
+    .control-panel {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .btn-ctrl {
+      background: #ff9800;
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      transition: transform 0.1s;
+    }
+
+    .btn-ctrl:active {
+      transform: scale(0.95);
+    }
+
+    /* Nút PLAY nằm khớp vùng nút ở ảnh gốc */
+    #btn-play {
+      position: absolute;
+      bottom: 2.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 32%;
+      height: 10%;
+      cursor: pointer;
+      z-index: 15;
+      border-radius: 30px;
+    }
+
+    /* Nhân vật Mèo thợ xây cầm xẻng */
+    #character {
+      position: absolute;
+      width: 7.5%;
+      height: 13%;
+      background: url('cat.png') no-repeat center center/contain;
+      transition: all 0.8s ease-in-out;
+      z-index: 12;
+      filter: drop-shadow(0px 5px 3px rgba(0,0,0,0.5));
+    }
+
+    /* Hiệu ứng bước đi nhún nhảy */
+    .walking {
+      animation: bounce 0.2s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
+    }
+
+    /* Hộp thoại Câu hỏi Popup */
+    .modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .quiz-card {
+      background: #fff8dc;
+      border: 4px solid #8b4513;
+      border-radius: 20px;
+      width: 85%;
+      max-width: 500px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .quiz-card h3 {
+      color: #8b4513;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .quiz-card p {
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .btn-opt {
+      background: #2196f3;
+      color: white;
+      border: 2px solid #1565c0;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-opt:hover {
+      background: #1e88e5;
+    }
+
+    .btn-opt:active {
+      transform: scale(0.98);
+    }
+
+    .btn-next {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+      margin: 10px auto 0;
+      box-shadow: 0 4px 0 #2e7d32;
+    }
+
+    .btn-next:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #2e7d32;
+    }
+
+    .feedback {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+      min-height: 25px;
+    }
+
+    /* Modal chỉnh sửa câu hỏi */
+    .edit-modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .edit-group {
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+      text-align: left;
+    }
+
+    .edit-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .edit-group input, .edit-group select {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 6px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-container">
+    <!-- Hiển thị Coins -->
+    <div class="coin-board">
+      🪙 <span id="coin-count">0</span> COINS
+    </div>
+
+    <!-- Thanh điều khiển: Bật nhạc, Sửa Game -->
+    <div class="control-panel">
+      <button class="btn-ctrl" onclick="toggleMusic()">🎵 Nhạc: Off</button>
+      <button class="btn-ctrl" onclick="openEditor()">✏️ Sửa Game</button>
+    </div>
+
+    <!-- Nhân vật chú mèo thợ xây -->
+    <div id="character"></div>
+
+    <!-- Vùng bấm PLAY -->
+    <div id="btn-play" onclick="startGame()"></div>
+
+    <!-- Popup Hỏi - Đáp -->
+    <div class="modal" id="quiz-modal">
+      <div class="quiz-card">
+        <h3 id="stage-title">CHẶNG 1</h3>
+        <p id="question-text">Nội dung câu hỏi ở đây?</p>
+        <div class="options-grid" id="options-container"></div>
+        <div class="feedback" id="feedback-text"></div>
+        <button class="btn-next" id="btn-next-stage" onclick="nextStage()">NEXT ➔</button>
+      </div>
+    </div>
+
+    <!-- Modal Quản Lý / Chỉnh Sửa Game -->
+    <div class="modal" id="edit-modal">
+      <div class="edit-modal-content">
+        <h2 style="margin-bottom: 15px; text-align: center;">Chỉnh Sửa 7 Câu Hỏi</h2>
+        <div id="editor-fields"></div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+          <button class="btn-ctrl" style="background: #4caf50;" onclick="saveQuestions()">💾 Lưu Lại</button>
+          <button class="btn-ctrl" style="background: #f44336;" onclick="closeEditor()">❌ Hủy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nhạc nền -->
+  <audio id="bg-music" loop src="https://actions.google.com/sounds/v1/ambiences/outdoor_theme_park.ogg"></audio>
+
+  <script>
+    // Tọa độ 7 mốc hòm vàng theo đúng vị trí hình ảnh gốc (%)
+    const STAGE_POSITIONS = [
+      { x: 5, y: 80 },    // Vị trí xuất phát (Bến thuyền)
+      { x: 12, y: 55 },   // Hòm 1
+      { x: 26, y: 22 },   // Hòm 2
+      { x: 44, y: 46 },   // Hòm 3
+      { x: 62, y: 22 },   // Hòm 4
+      { x: 79, y: 56 },   // Hòm 5
+      { x: 28, y: 68 },   // Hòm 6
+      { x: 68, y: 72 }    // Hòm 7
+    ];
+
+    // Dữ liệu câu hỏi mẫu
+    const defaultQuestions = [
+      { q: "Chặng 1: 1 + 1 bằng bao nhiêu?", opts: ["A. 1", "B. 2", "C. 3", "D. 4"], ans: 1 },
+      { q: "Chặng 2: Thủ đô của Việt Nam là gì?", opts: ["A. TP.HCM", "B. Đà Nẵng", "C. Hà Nội", "D. Cần Thơ"], ans: 2 },
+      { q: "Chặng 3: Con vật nào biết bay?", opts: ["A. Chim", "B. Cá", "C. Chó", "D. Mèo"], ans: 0 },
+      { q: "Chặng 4: Mặt trời mọc ở hướng nào?", opts: ["A. Tây", "B. Nam", "C. Bắc", "D. Đông"], ans: 3 },
+      { q: "Chặng 5: 1 năm có bao nhiêu tháng?", opts: ["A. 10", "B. 11", "C. 12", "D. 13"], ans: 2 },
+      { q: "Chặng 6: Nước sôi ở bao nhiêu độ C?", opts: ["A. 50°C", "B. 80°C", "C. 100°C", "D. 120°C"], ans: 2 },
+      { q: "Chặng 7: Đâu là kho báu lớn nhất?", opts: ["A. Vàng", "B. Kim cương", "C. Tri thức", "D. Tiền bạc"], ans: 2 }
+    ];
+
+    let questions = JSON.parse(localStorage.getItem('treasure_questions')) || defaultQuestions;
+    let currentStage = 0;
+    let coins = 0;
+    let isMusicPlaying = false;
+
+    const char = document.getElementById('character');
+    const coinElem = document.getElementById('coin-count');
+    const quizModal = document.getElementById('quiz-modal');
+    const bgMusic = document.getElementById('bg-music');
+
+    function setCharacterPos(pos) {
+      char.style.left = pos.x + '%';
+      char.style.top = pos.y + '%';
+    }
+    setCharacterPos(STAGE_POSITIONS[0]);
+
+    function startGame() {
+      document.getElementById('btn-play').style.display = 'none';
+      currentStage = 1;
+      moveToStage(currentStage);
+    }
+
+    function moveToStage(stageIdx) {
+      char.classList.add('walking');
+      const targetPos = STAGE_POSITIONS[stageIdx];
+      setCharacterPos(targetPos);
+
+      setTimeout(() => {
+        char.classList.remove('walking');
+        showQuiz(stageIdx);
+      }, 850);
+    }
+
+    function showQuiz(stageIdx) {
+      const qData = questions[stageIdx - 1];
+      document.getElementById('stage-title').innerText = `CHẶNG ${stageIdx}`;
+      document.getElementById('question-text').innerText = qData.q;
+      
+      const optsContainer = document.getElementById('options-container');
+      optsContainer.innerHTML = '';
+      document.getElementById('feedback-text').innerText = '';
+      document.getElementById('btn-next-stage').style.display = 'none';
+
+      qData.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-opt';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(idx, qData.ans);
+        optsContainer.appendChild(btn);
+      });
+
+      quizModal.style.display = 'flex';
+    }
+
+    function checkAnswer(selected, correct) {
+      const feedback = document.getElementById('feedback-text');
+      const buttons = document.querySelectorAll('.btn-opt');
+      
+      buttons.forEach(b => b.disabled = true);
+
+      if (selected === correct) {
+        feedback.style.color = '#2e7d32';
+        feedback.innerText = '🎉 Chính xác! (+100 Coins)';
+        playTungTingSound();
+        coins += 100;
+        coinElem.innerText = coins;
+      } else {
+        feedback.style.color = '#c62828';
+        feedback.innerText = '😅 Sorry! Đáp án chưa đúng rồi.';
+      }
+
+      document.getElementById('btn-next-stage').style.display = 'block';
+    }
+
+    function nextStage() {
+      quizModal.style.display = 'none';
+      if (currentStage < 7) {
+        currentStage++;
+        moveToStage(currentStage);
+      } else {
+        alert(`🏆 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH KHO BÁU!\nTổng số coin nhận được: ${coins} Coins`);
+        currentStage = 0;
+        setCharacterPos(STAGE_POSITIONS[0]);
+        document.getElementById('btn-play').style.display = 'block';
+      }
+    }
+
+    // Âm thanh Tùng ting / coin leng keng
+    function playTungTingSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.frequency.setValueAtTime(523.25, ctx.currentTime);
+        gain1.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start();
+        osc1.stop(ctx.currentTime + 0.3);
+
+        setTimeout(() => {
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.frequency.setValueAtTime(1046.50, ctx.currentTime);
+          gain2.gain.setValueAtTime(0.4, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start();
+          osc2.stop(ctx.currentTime + 0.5);
+        }, 150);
+      } catch (e) {
+        console.log("Audio error:", e);
+      }
+    }
+
+    function toggleMusic() {
+      const btn = event.target;
+      if (isMusicPlaying) {
+        bgMusic.pause();
+        btn.innerText = '🎵 Nhạc: Off';
+      } else {
+        bgMusic.play();
+        btn.innerText = '🎵 Nhạc: On';
+      }
+      isMusicPlaying = !isMusicPlaying;
+    }
+
+    function openEditor() {
+      const container = document.getElementById('editor-fields');
+      container.innerHTML = '';
+
+      questions.forEach((q, i) => {
+        let optionsHTML = '';
+        q.opts.forEach((opt, oIdx) => {
+          optionsHTML += `<input type="text" id="edit-q${i}-opt${oIdx}" value="${opt}">`;
+        });
+
+        container.innerHTML += `
+          <div class="edit-group">
+            <label>Câu hỏi ${i + 1}:</label>
+            <input type="text" id="edit-q${i}-text" value="${q.q}">
+            <label>Các đáp án (A, B, C, D):</label>
+            ${optionsHTML}
+            <label>Đáp án đúng:</label>
+            <select id="edit-q${i}-ans">
+              <option value="0" ${q.ans === 0 ? 'selected' : ''}>Đáp án 1</option>
+              <option value="1" ${q.ans === 1 ? 'selected' : ''}>Đáp án 2</option>
+              <option value="2" ${q.ans === 2 ? 'selected' : ''}>Đáp án 3</option>
+              <option value="3" ${q.ans === 3 ? 'selected' : ''}>Đáp án 4</option>
+            </select>
+          </div>
+        `;
+      });
+
+      document.getElementById('edit-modal').style.display = 'flex';
+    }
+
+    function saveQuestions() {
+      const newQuestions = [];
+      for (let i = 0; i < 7; i++) {
+        const qText = document.getElementById(`edit-q${i}-text`).value;
+        const opts = [
+          document.getElementById(`edit-q${i}-opt0`).value,
+          document.getElementById(`edit-q${i}-opt1`).value,
+          document.getElementById(`edit-q${i}-opt2`).value,
+          document.getElementById(`edit-q${i}-opt3`).value
+        ];
+        const ans = parseInt(document.getElementById(`edit-q${i}-ans`).value);
+        newQuestions.push({ q: qText, opts: opts, ans: ans });
+      }
+
+      questions = newQuestions;
+      localStorage.setItem('treasure_questions', JSON.stringify(questions));
+      closeEditor();
+      alert('Đã lưu nội dung câu hỏi thành công!');
+    }
+
+    function closeEditor() {
+      document.getElementById('edit-modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
