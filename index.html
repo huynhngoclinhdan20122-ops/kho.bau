@@ -94,15 +94,19 @@
       border-radius: 30px;
     }
 
-    /* Nhân vật Mèo thợ xây cầm xẻng */
+    /* Nhân vật Mèo thợ xây - Đã tối ưu trong suốt tuyệt đối */
     #character {
       position: absolute;
       width: 7.5%;
       height: 13%;
       background: url('cat.png') no-repeat center center/contain;
+      background-color: transparent !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
       transition: all 0.8s ease-in-out;
       z-index: 12;
-      filter: drop-shadow(0px 5px 3px rgba(0,0,0,0.5));
+      filter: drop-shadow(0px 3px 2px rgba(0,0,0,0.4));
     }
 
     /* Hiệu ứng bước đi nhún nhảy */
@@ -275,7 +279,7 @@
     <!-- Modal Quản Lý / Chỉnh Sửa Game -->
     <div class="modal" id="edit-modal">
       <div class="edit-modal-content">
-        <h2 style="margin-bottom: 15px; text-align: center;">Chỉnh Sửa 7 Câu Hỏi</h2>
+        <h2 style="margin-bottom: 15px; text-align: center;">Chỉnh Sửa Câu Hỏi 7 Chặng</h2>
         <div id="editor-fields"></div>
         <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
           <button class="btn-ctrl" style="background: #4caf50;" onclick="saveQuestions()">💾 Lưu Lại</button>
@@ -289,7 +293,7 @@
   <audio id="bg-music" loop src="https://actions.google.com/sounds/v1/ambiences/outdoor_theme_park.ogg"></audio>
 
   <script>
-    // Tọa độ 7 mốc hòm vàng theo đúng vị trí hình ảnh gốc (%)
+    // Tọa độ 7 mốc hòm vàng (%)
     const STAGE_POSITIONS = [
       { x: 5, y: 80 },    // Vị trí xuất phát (Bến thuyền)
       { x: 12, y: 55 },   // Hòm 1
@@ -301,19 +305,55 @@
       { x: 68, y: 72 }    // Hòm 7
     ];
 
-    // Dữ liệu câu hỏi mẫu
+    // Dữ liệu ngân hàng câu hỏi (Mỗi chặng gồm nhiều câu hỏi thay đổi khi làm sai)
     const defaultQuestions = [
-      { q: "Chặng 1: 1 + 1 bằng bao nhiêu?", opts: ["A. 1", "B. 2", "C. 3", "D. 4"], ans: 1 },
-      { q: "Chặng 2: Thủ đô của Việt Nam là gì?", opts: ["A. TP.HCM", "B. Đà Nẵng", "C. Hà Nội", "D. Cần Thơ"], ans: 2 },
-      { q: "Chặng 3: Con vật nào biết bay?", opts: ["A. Chim", "B. Cá", "C. Chó", "D. Mèo"], ans: 0 },
-      { q: "Chặng 4: Mặt trời mọc ở hướng nào?", opts: ["A. Tây", "B. Nam", "C. Bắc", "D. Đông"], ans: 3 },
-      { q: "Chặng 5: 1 năm có bao nhiêu tháng?", opts: ["A. 10", "B. 11", "C. 12", "D. 13"], ans: 2 },
-      { q: "Chặng 6: Nước sôi ở bao nhiêu độ C?", opts: ["A. 50°C", "B. 80°C", "C. 100°C", "D. 120°C"], ans: 2 },
-      { q: "Chặng 7: Đâu là kho báu lớn nhất?", opts: ["A. Vàng", "B. Kim cương", "C. Tri thức", "D. Tiền bạc"], ans: 2 }
+      // Chặng 1
+      [
+        { q: "Chặng 1: 1 + 1 bằng bao nhiêu?", opts: ["A. 1", "B. 2", "C. 3", "D. 4"], ans: 1 },
+        { q: "Chặng 1 (Đổi câu): 2 + 2 bằng bao nhiêu?", opts: ["A. 2", "B. 3", "C. 4", "D. 5"], ans: 2 },
+        { q: "Chặng 1 (Đổi câu): Con mèo kêu như thế nào?", opts: ["A. Gâu gâu", "B. Mèo mèo", "C. Cục tác", "D. Meo meo"], ans: 3 }
+      ],
+      // Chặng 2
+      [
+        { q: "Chặng 2: Thủ đô của Việt Nam là gì?", opts: ["A. TP.HCM", "B. Đà Nẵng", "C. Hà Nội", "D. Cần Thơ"], ans: 2 },
+        { q: "Chặng 2 (Đổi câu): Quốc kỳ Việt Nam có màu gì làm nền?", opts: ["A. Vàng", "B. Đỏ", "C. Xanh", "D. Trắng"], ans: 1 },
+        { q: "Chặng 2 (Đổi câu): Bánh chưng có hình gì?", opts: ["A. Tròn", "B. Tam giác", "C. Vuông", "D. Chữ nhật"], ans: 2 }
+      ],
+      // Chặng 3
+      [
+        { q: "Chặng 3: Con vật nào biết bay?", opts: ["A. Chim", "B. Cá", "C. Chó", "D. Mèo"], ans: 0 },
+        { q: "Chặng 3 (Đổi câu): Con gì sống dưới nước?", opts: ["A. Gà", "B. Cá", "C. Bò", "D. Thỏ"], ans: 1 },
+        { q: "Chặng 3 (Đổi câu): Con gì có vòi rất dài?", opts: ["A. Hổ", "B. Voi", "C. Hươu", "D. Ngựa"], ans: 1 }
+      ],
+      // Chặng 4
+      [
+        { q: "Chặng 4: Mặt trời mọc ở hướng nào?", opts: ["A. Tây", "B. Nam", "C. Bắc", "D. Đông"], ans: 3 },
+        { q: "Chặng 4 (Đổi câu): Một tuần có bao nhiêu ngày?", opts: ["A. 5 ngày", "B. 6 ngày", "C. 7 ngày", "D. 8 ngày"], ans: 2 },
+        { q: "Chặng 4 (Đổi câu): Ban đêm mặt gì xuất hiện?", opts: ["A. Mặt trời", "B. Mặt trăng", "C. Mặt đất", "D. Mặt hồ"], ans: 1 }
+      ],
+      // Chặng 5
+      [
+        { q: "Chặng 5: 1 năm có bao nhiêu tháng?", opts: ["A. 10", "B. 11", "C. 12", "D. 13"], ans: 2 },
+        { q: "Chặng 5 (Đổi câu): 5 x 5 bằng bao nhiêu?", opts: ["A. 20", "B. 25", "C. 30", "D. 35"], ans: 1 },
+        { q: "Chặng 5 (Đổi câu): Đâu là một loại quả?", opts: ["A. Táo", "B. Bàn", "C. Ghế", "D. Bút"], ans: 0 }
+      ],
+      // Chặng 6
+      [
+        { q: "Chặng 6: Nước sôi ở bao nhiêu độ C?", opts: ["A. 50°C", "B. 80°C", "C. 100°C", "D. 120°C"], ans: 2 },
+        { q: "Chặng 6 (Đổi câu): Đâu là màu cơ bản?", opts: ["A. Đỏ", "B. Nâu", "C. Xám", "D. Hồng"], ans: 0 },
+        { q: "Chặng 6 (Đổi câu): Xe máy có mấy bánh?", opts: ["A. 1 bánh", "B. 2 bánh", "C. 3 bánh", "D. 4 bánh"], ans: 1 }
+      ],
+      // Chặng 7
+      [
+        { q: "Chặng 7: Đâu là kho báu lớn nhất?", opts: ["A. Vàng", "B. Kim cương", "C. Tri thức", "D. Tiền bạc"], ans: 2 },
+        { q: "Chặng 7 (Đổi câu): 10 - 3 bằng bao nhiêu?", opts: ["A. 5", "B. 6", "C. 7", "D. 8"], ans: 2 },
+        { q: "Chặng 7 (Đổi câu): Bạn đã sẵn sàng mở kho báu chưa?", opts: ["A. Chưa", "B. Sẵn sàng", "C. Không", "D. Bỏ cuộc"], ans: 1 }
+      ]
     ];
 
-    let questions = JSON.parse(localStorage.getItem('treasure_questions')) || defaultQuestions;
+    let questions = JSON.parse(localStorage.getItem('treasure_questions_v2')) || defaultQuestions;
     let currentStage = 0;
+    let subQuestionIdx = 0; // Chỉ số câu hỏi phụ trong chặng
     let coins = 0;
     let isMusicPlaying = false;
 
@@ -331,6 +371,7 @@
     function startGame() {
       document.getElementById('btn-play').style.display = 'none';
       currentStage = 1;
+      subQuestionIdx = 0;
       moveToStage(currentStage);
     }
 
@@ -341,12 +382,17 @@
 
       setTimeout(() => {
         char.classList.remove('walking');
-        showQuiz(stageIdx);
+        subQuestionIdx = 0; // Đặt lại về câu hỏi đầu tiên của chặng
+        showQuiz(stageIdx, subQuestionIdx);
       }, 850);
     }
 
-    function showQuiz(stageIdx) {
-      const qData = questions[stageIdx - 1];
+    function showQuiz(stageIdx, qSubIdx) {
+      const stageBank = questions[stageIdx - 1];
+      // Nếu hết câu hỏi dự phòng thì quay lại câu đầu tiên
+      const actualIdx = qSubIdx % stageBank.length;
+      const qData = stageBank[actualIdx];
+
       document.getElementById('stage-title').innerText = `CHẶNG ${stageIdx}`;
       document.getElementById('question-text').innerText = qData.q;
       
@@ -369,21 +415,28 @@
     function checkAnswer(selected, correct) {
       const feedback = document.getElementById('feedback-text');
       const buttons = document.querySelectorAll('.btn-opt');
-      
-      buttons.forEach(b => b.disabled = true);
 
       if (selected === correct) {
+        // Trả lời đúng
+        buttons.forEach(b => b.disabled = true);
         feedback.style.color = '#2e7d32';
         feedback.innerText = '🎉 Chính xác! (+100 Coins)';
         playTungTingSound();
         coins += 100;
         coinElem.innerText = coins;
+        document.getElementById('btn-next-stage').style.display = 'block';
       } else {
+        // Trả lời sai -> Đổi ngay sang câu hỏi khác, KHÔNG được qua màn
         feedback.style.color = '#c62828';
-        feedback.innerText = '😅 Sorry! Đáp án chưa đúng rồi.';
-      }
+        feedback.innerText = '😅 Chờ chút... Câu hỏi khác xuất hiện!';
+        
+        buttons.forEach(b => b.disabled = true);
 
-      document.getElementById('btn-next-stage').style.display = 'block';
+        setTimeout(() => {
+          subQuestionIdx++;
+          showQuiz(currentStage, subQuestionIdx);
+        }, 1200);
+      }
     }
 
     function nextStage() {
@@ -445,7 +498,8 @@
       const container = document.getElementById('editor-fields');
       container.innerHTML = '';
 
-      questions.forEach((q, i) => {
+      questions.forEach((stageBank, i) => {
+        const q = stageBank[0]; // Chỉnh sửa câu hỏi chính đại diện cho chặng
         let optionsHTML = '';
         q.opts.forEach((opt, oIdx) => {
           optionsHTML += `<input type="text" id="edit-q${i}-opt${oIdx}" value="${opt}">`;
@@ -453,7 +507,7 @@
 
         container.innerHTML += `
           <div class="edit-group">
-            <label>Câu hỏi ${i + 1}:</label>
+            <label>Chặng ${i + 1} (Câu hỏi chính):</label>
             <input type="text" id="edit-q${i}-text" value="${q.q}">
             <label>Các đáp án (A, B, C, D):</label>
             ${optionsHTML}
@@ -472,7 +526,6 @@
     }
 
     function saveQuestions() {
-      const newQuestions = [];
       for (let i = 0; i < 7; i++) {
         const qText = document.getElementById(`edit-q${i}-text`).value;
         const opts = [
@@ -482,11 +535,10 @@
           document.getElementById(`edit-q${i}-opt3`).value
         ];
         const ans = parseInt(document.getElementById(`edit-q${i}-ans`).value);
-        newQuestions.push({ q: qText, opts: opts, ans: ans });
+        questions[i][0] = { q: qText, opts: opts, ans: ans };
       }
 
-      questions = newQuestions;
-      localStorage.setItem('treasure_questions', JSON.stringify(questions));
+      localStorage.setItem('treasure_questions_v2', JSON.stringify(questions));
       closeEditor();
       alert('Đã lưu nội dung câu hỏi thành công!');
     }
