@@ -22,7 +22,6 @@
       overflow: hidden;
     }
 
-    /* Container game chuẩn tỉ lệ ảnh gốc */
     #game-container {
       position: relative;
       width: 100vw;
@@ -35,7 +34,6 @@
       border-radius: 12px;
     }
 
-    /* Thẻ hiển thị Coin */
     .coin-board {
       position: absolute;
       top: 15px;
@@ -54,7 +52,6 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     }
 
-    /* Bảng thanh điều khiển nhạc & sửa game */
     .control-panel {
       position: absolute;
       top: 15px;
@@ -81,7 +78,6 @@
       transform: scale(0.95);
     }
 
-    /* Nút PLAY nằm khớp vùng nút ở ảnh gốc */
     #btn-play {
       position: absolute;
       bottom: 2.5%;
@@ -94,7 +90,6 @@
       border-radius: 30px;
     }
 
-    /* Nhân vật Mèo thợ xây */
     #character {
       position: absolute;
       width: 7.5%;
@@ -109,7 +104,6 @@
       filter: drop-shadow(0px 3px 2px rgba(0,0,0,0.4));
     }
 
-    /* Hiệu ứng bước đi nhún nhảy */
     .walking {
       animation: bounce 0.2s infinite alternate;
     }
@@ -119,7 +113,6 @@
       to { transform: translateY(-8px); }
     }
 
-    /* Hộp thoại Popup chung */
     .modal {
       position: absolute;
       top: 0;
@@ -201,7 +194,6 @@
       min-height: 25px;
     }
 
-    /* Giao diện Bảng Sửa Game (Dành cho chủ máy chủ) */
     .editor-card {
       background: #fdfdfd;
       border: 4px solid #333;
@@ -264,24 +256,18 @@
 <body>
 
   <div id="game-container">
-    <!-- Hiển thị Coins -->
     <div class="coin-board">
       🪙 <span id="coin-count">0</span> COINS
     </div>
 
-    <!-- Thanh điều khiển có nút Sửa Game (Bảo mật bằng mật khẩu) -->
     <div class="control-panel">
       <button class="btn-ctrl" onclick="toggleMusic()">🎵 Nhạc: Off</button>
       <button class="btn-ctrl" onclick="openEditor()">✏️ Sửa Game</button>
     </div>
 
-    <!-- Nhân vật chú mèo thợ xây -->
     <div id="character"></div>
-
-    <!-- Vùng bấm PLAY -->
     <div id="btn-play" onclick="startGame()"></div>
 
-    <!-- Popup Hỏi - Đáp -->
     <div class="modal" id="quiz-modal">
       <div class="quiz-card">
         <h3 id="stage-title">CHẶNG 1</h3>
@@ -292,24 +278,20 @@
       </div>
     </div>
 
-    <!-- Popup Quản trị Sửa Game (Có mật khẩu) -->
     <div class="modal" id="edit-modal">
       <div class="editor-card">
         <h2>🔒 QUẢN TRỊ VIÊN SỬA CÂU HỎI</h2>
         <div id="editor-fields"></div>
-        <button class="btn-save-close" onclick="closeEditorAndSave()">💾 Đóng & Lưu lại (Copy code cập nhật GitHub)</button>
+        <button class="btn-save-close" onclick="closeEditorAndSave()">💾 Đóng & Lưu lại</button>
       </div>
     </div>
   </div>
 
-  <!-- Nhạc nền TikTok/MP3 -->
   <audio id="bg-music" loop src="music.mp3"></audio>
 
   <script>
-    // 🔑 Mật khẩu quản trị của bạn (Bạn có thể đổi số tùy ý ở đây)
     const ADMIN_PASSWORD = "123456";
 
-    // Tọa độ 7 mốc hòm vàng (%)
     const STAGE_POSITIONS = [
       { x: 5, y: 80 },    
       { x: 12, y: 55 },   
@@ -321,54 +303,27 @@
       { x: 68, y: 72 }    
     ];
 
-    // Dữ liệu ngân hàng câu hỏi
     const questions = [
       [
-        { q: "Chặng 1: Kí hiệu hóa học nào sau đây biểu diễn công thức của Natri hiđroxit (xút ăn da)?", opts: ["A. NaCl", "B. NaOH", "C. Na2SO4", "D. Na2CO3"], ans: 1 },
-        { q: "Chặng 1 (Đổi câu): 2 + 2 bằng bao nhiêu?", opts: ["A. 2", "B. 3", "C. 4", "D. 5"], ans: 2 },
-        { q: "Chặng 1 (Đổi câu): Con mèo kêu như thế nào?", opts: ["A. Gâu gâu", "B. Mèo mèo", "C. Cục tác", "D. Meo meo"], ans: 3 }
+        { q: "Chặng 1: Kí hiệu hóa học nào sau đây biểu diễn công thức của Natri hiđroxit (xút ăn da)?", opts: ["A. NaCl", "B. NaOH", "C. Na2SO4", "D. Na2CO3"], ans: 1 }
       ],
       [
-        { q: "Chặng 2: Bazơ nào sau đây thuộc loại bazơ không tan trong nước?
-
-", opts: ["A. NaOH", "B. KOH", "C.Cu(OH)2", "D. Ba(OH)2"], ans: 2 },
-        { q: "Chặng 2 (Đổi câu): Quốc kỳ Việt Nam có màu gì làm nền?", opts: ["A. Vàng", "B. Đỏ", "C. Xanh", "D. Trắng"], ans: 1 },
-        { q: "Chặng 2 (Đổi câu): Bánh chưng có hình gì?", opts: ["A. Tròn", "B. Tam giác", "C. Vuông", "D. Chữ nhật"], ans: 2 }
+        { q: "Chặng 2: Bazơ nào sau đây thuộc loại bazơ không tan trong nước?", opts: ["A. NaOH", "B. KOH", "C. Cu(OH)2", "D. Ba(OH)2"], ans: 2 }
       ],
       [
-        { q: "Chặng 3: Trên một bóng đèn có ghi 220V - 40W. Con số 40W cho biết điều gì?", opts: ["A. Hiệu điện thế định mức của bóng đèn là 40V", "B. Công suất định mức của bóng đèn là 40W", "C. Điện trở của bóng đèn luôn bằng 40 ôm", "D. Điện năng tiêu thụ của đèn trong 1 giờ luôn là 40J"], ans: 1 },
-        { q: "Chặng 3 (Đổi câu): Con gì sống dưới nước?", opts: ["A. Gà", "B. Cá", "C. Bò", "D. Thỏ"], ans: 1 },
-        { q: "Chặng 3 (Đổi câu): Con gì có vòi rất dài?", opts: ["A. Hổ", "B. Voi", "C. Hươu", "D. Ngựa"], ans: 1 }
+        { q: "Chặng 3: Trên một bóng đèn có ghi 220V - 40W. Con số 40W cho biết điều gì?", opts: ["A. Hiệu điện thế định mức của bóng đèn là 40V", "B. Công suất định mức của bóng đèn là 40W", "C. Điện trở của bóng đèn luôn bằng 40 ôm", "D. Điện năng tiêu thụ của đèn trong 1 giờ luôn là 40J"], ans: 1 }
       ],
       [
-        { q: "Chặng 4: Hiện tượng nào dưới đây thể hiện tác dụng từ của dòng điện?", opts: ["A. Dòng điện chạy qua dây dẫn làm dây dẫn nóng lên", "B. Dòng điện chạy qua bóng đèn làm đèn phát sáng", "C. Dòng điện chạy qua cuộn dây dẫn làm quay kim nam châm đặt gần nó", "D.  Dòng điện chạy qua dung dịch muối đồng làm tách đồng ra khỏi dung dịch"], ans: 2 },
-        { q: "Chặng 4 (Đổi câu): Một tuần có bao nhiêu ngày?", opts: ["A. 5 ngày", "B. 6 ngày", "C. 7 ngày", "D. 8 ngày"], ans: 2 },
-        { q: "Chặng 4 (Đổi câu): Ban đêm mặt gì xuất hiện?", opts: ["A. Mặt trời", "B. Mặt trăng", "C. Mặt đất", "D. Mặt hồ"], ans: 1 }
+        { q: "Chặng 4: Hiện tượng nào dưới đây thể hiện tác dụng từ của dòng điện?", opts: ["A. Dòng điện chạy qua dây dẫn làm dây dẫn nóng lên", "B. Dòng điện chạy qua bóng đèn làm đèn phát sáng", "C. Dòng điện chạy qua cuộn dây dẫn làm quay kim nam châm đặt gần nó", "D. Dòng điện chạy qua dung dịch muối đồng làm tách đồng ra khỏi dung dịch"], ans: 2 }
       ],
       [
-        { q: "Chặng 5: Điều kiện xác định của √x-3 là", opts: ["A. x > 3", "B. x < 3", "C. x ≥ 3
-
-", "D. x ≤ 3"], ans: 2 },
-        { q: "Chặng 5 (Đổi câu): 5 x 5 bằng bao nhiêu?", opts: ["A. 20", "B. 25", "C. 30", "D. 35"], ans: 1 },
-        { q: "Chặng 5 (Đổi câu): Đâu là một loại quả?", opts: ["A. Táo", "B. Bàn", "C. Ghế", "D. Bút"], ans: 0 }
+        { q: "Chặng 5: Điều kiện xác định của căn thức bậc hai căn(x - 3) là:", opts: ["A. x > 3", "B. x < 3", "C. x >= 3", "D. x <= 3"], ans: 2 }
       ],
       [
-        { q: "Chặng 6: Cặp số nào sau đây là nghiệm của hệ phương trình:{ x + y = 3 | x - y = 3 }?", opts: ["A. (x = 2; y = 1)
-
-", "B. (x = 1; y = 2)
-
-", "C. (x = 3; y = 0)
-
-", "D. (x = 0; y = 3)
-
-"], ans: 0 },
-        { q: "Chặng 6 (Đổi câu): Đâu là màu cơ bản?", opts: ["A. Đỏ", "B. Nâu", "C. Xám", "D. Hồng"], ans: 0 },
-        { q: "Chặng 6 (Đổi câu): Xe máy có mấy bánh?", opts: ["A. 1 bánh", "B. 2 bánh", "C. 3 bánh", "D. 4 bánh"], ans: 1 }
+        { q: "Chặng 6: Cặp số nào sau đây là nghiệm của hệ phương trình: x + y = 3 và x - y = 1?", opts: ["A. (x = 2; y = 1)", "B. (x = 1; y = 2)", "C. (x = 3; y = 0)", "D. (x = 0; y = 3)"], ans: 0 }
       ],
       [
-        { q: "Chặng 7: This is the first time I ________ to Da Nang", opts: ["A. go", "B. went", "C. have been", "D. am going"], ans: 2 },
-        { q: "Chặng 7 (Đổi câu): 10 - 3 bằng bao nhiêu?", opts: ["A. 5", "B. 6", "C. 7", "D. 8"], ans: 2 },
-        { q: "Chặng 7 (Đổi câu): Bạn đã sẵn sàng mở kho báu chưa?", opts: ["A. Chưa", "B. Sẵn sàng", "C. Không", "D. Bỏ cuộc"], ans: 1 }
+        { q: "Chặng 7: This is the first time I ________ to Da Nang.", opts: ["A. go", "B. went", "C. have been", "D. am going"], ans: 2 }
       ]
     ];
 
@@ -445,7 +400,7 @@
         document.getElementById('btn-next-stage').style.display = 'block';
       } else {
         feedback.style.color = '#c62828';
-        feedback.innerText = '😅 Chờ chút... Câu hỏi khác xuất hiện!';
+        feedback.innerText = '😅 Chưa chính xác, thử lại nhé!';
         buttons.forEach(b => b.disabled = true);
 
         setTimeout(() => {
@@ -468,7 +423,6 @@
       }
     }
 
-    // Hàm mở bảng quản trị (Có hỏi mật khẩu)
     function openEditor() {
       const pass = prompt("🔐 Nhập mật khẩu quản trị viên để sửa game:");
       if (pass !== ADMIN_PASSWORD) {
@@ -480,7 +434,7 @@
       container.innerHTML = '';
 
       questions.forEach((stageBank, i) => {
-        const q = stageBank[0]; // Lấy câu hỏi chính hiển thị mẫu
+        const q = stageBank[0];
         let optionsHTML = '';
         q.opts.forEach((opt, oIdx) => {
           optionsHTML += `<input type="text" id="edit-q${i}-opt${oIdx}" value="${opt}">`;
@@ -502,7 +456,6 @@
     }
 
     function closeEditorAndSave() {
-      // Cập nhật lại dữ liệu từ form vào mảng questions
       questions.forEach((stageBank, i) => {
         const newText = document.getElementById(`edit-q${i}-text`).value;
         const opt0 = document.getElementById(`edit-q${i}-opt0`).value;
@@ -517,7 +470,7 @@
       });
 
       document.getElementById('edit-modal').style.display = 'none';
-      alert("✅ Đã cập nhật câu hỏi tạm thời cho phiên chơi này!\n(Lưu ý: Để lưu vĩnh viễn trên GitHub, bạn hãy copy đoạn code trong file index.html hiện tại dán ngược lại vào GitHub nhé).");
+      alert("✅ Đã cập nhật câu hỏi tạm thời cho phiên chơi này!");
     }
 
     function playTungTingSound() {
