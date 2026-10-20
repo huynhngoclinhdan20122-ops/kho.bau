@@ -324,37 +324,49 @@
     // Dữ liệu ngân hàng câu hỏi
     const questions = [
       [
-        { q: "Chặng 1: 1 + 1 bằng bao nhiêu?", opts: ["A. 1", "B. 2", "C. 3", "D. 4"], ans: 1 },
+        { q: "Chặng 1: Kí hiệu hóa học nào sau đây biểu diễn công thức của Natri hiđroxit (xút ăn da)?", opts: ["A. NaCl", "B. NaOH", "C. Na2SO4", "D. Na2CO3"], ans: 1 },
         { q: "Chặng 1 (Đổi câu): 2 + 2 bằng bao nhiêu?", opts: ["A. 2", "B. 3", "C. 4", "D. 5"], ans: 2 },
         { q: "Chặng 1 (Đổi câu): Con mèo kêu như thế nào?", opts: ["A. Gâu gâu", "B. Mèo mèo", "C. Cục tác", "D. Meo meo"], ans: 3 }
       ],
       [
-        { q: "Chặng 2: Thủ đô của Việt Nam là gì?", opts: ["A. TP.HCM", "B. Đà Nẵng", "C. Hà Nội", "D. Cần Thơ"], ans: 2 },
+        { q: "Chặng 2: Bazơ nào sau đây thuộc loại bazơ không tan trong nước?
+
+", opts: ["A. NaOH", "B. KOH", "C.Cu(OH)2", "D. Ba(OH)2"], ans: 2 },
         { q: "Chặng 2 (Đổi câu): Quốc kỳ Việt Nam có màu gì làm nền?", opts: ["A. Vàng", "B. Đỏ", "C. Xanh", "D. Trắng"], ans: 1 },
         { q: "Chặng 2 (Đổi câu): Bánh chưng có hình gì?", opts: ["A. Tròn", "B. Tam giác", "C. Vuông", "D. Chữ nhật"], ans: 2 }
       ],
       [
-        { q: "Chặng 3: Con vật nào biết bay?", opts: ["A. Chim", "B. Cá", "C. Chó", "D. Mèo"], ans: 0 },
+        { q: "Chặng 3: Trên một bóng đèn có ghi 220V - 40W. Con số 40W cho biết điều gì?", opts: ["A. Hiệu điện thế định mức của bóng đèn là 40V", "B. Công suất định mức của bóng đèn là 40W", "C. Điện trở của bóng đèn luôn bằng 40 ôm", "D. Điện năng tiêu thụ của đèn trong 1 giờ luôn là 40J"], ans: 1 },
         { q: "Chặng 3 (Đổi câu): Con gì sống dưới nước?", opts: ["A. Gà", "B. Cá", "C. Bò", "D. Thỏ"], ans: 1 },
         { q: "Chặng 3 (Đổi câu): Con gì có vòi rất dài?", opts: ["A. Hổ", "B. Voi", "C. Hươu", "D. Ngựa"], ans: 1 }
       ],
       [
-        { q: "Chặng 4: Mặt trời mọc ở hướng nào?", opts: ["A. Tây", "B. Nam", "C. Bắc", "D. Đông"], ans: 3 },
+        { q: "Chặng 4: Hiện tượng nào dưới đây thể hiện tác dụng từ của dòng điện?", opts: ["A. Dòng điện chạy qua dây dẫn làm dây dẫn nóng lên", "B. Dòng điện chạy qua bóng đèn làm đèn phát sáng", "C. Dòng điện chạy qua cuộn dây dẫn làm quay kim nam châm đặt gần nó", "D.  Dòng điện chạy qua dung dịch muối đồng làm tách đồng ra khỏi dung dịch"], ans: 2 },
         { q: "Chặng 4 (Đổi câu): Một tuần có bao nhiêu ngày?", opts: ["A. 5 ngày", "B. 6 ngày", "C. 7 ngày", "D. 8 ngày"], ans: 2 },
         { q: "Chặng 4 (Đổi câu): Ban đêm mặt gì xuất hiện?", opts: ["A. Mặt trời", "B. Mặt trăng", "C. Mặt đất", "D. Mặt hồ"], ans: 1 }
       ],
       [
-        { q: "Chặng 5: 1 năm có bao nhiêu tháng?", opts: ["A. 10", "B. 11", "C. 12", "D. 13"], ans: 2 },
+        { q: "Chặng 5: Điều kiện xác định của √x-3 là", opts: ["A. x > 3", "B. x < 3", "C. x ≥ 3
+
+", "D. x ≤ 3"], ans: 2 },
         { q: "Chặng 5 (Đổi câu): 5 x 5 bằng bao nhiêu?", opts: ["A. 20", "B. 25", "C. 30", "D. 35"], ans: 1 },
         { q: "Chặng 5 (Đổi câu): Đâu là một loại quả?", opts: ["A. Táo", "B. Bàn", "C. Ghế", "D. Bút"], ans: 0 }
       ],
       [
-        { q: "Chặng 6: Nước sôi ở bao nhiêu độ C?", opts: ["A. 50°C", "B. 80°C", "C. 100°C", "D. 120°C"], ans: 2 },
+        { q: "Chặng 6: Cặp số nào sau đây là nghiệm của hệ phương trình:{ x + y = 3 | x - y = 3 }?", opts: ["A. (x = 2; y = 1)
+
+", "B. (x = 1; y = 2)
+
+", "C. (x = 3; y = 0)
+
+", "D. (x = 0; y = 3)
+
+"], ans: 0 },
         { q: "Chặng 6 (Đổi câu): Đâu là màu cơ bản?", opts: ["A. Đỏ", "B. Nâu", "C. Xám", "D. Hồng"], ans: 0 },
         { q: "Chặng 6 (Đổi câu): Xe máy có mấy bánh?", opts: ["A. 1 bánh", "B. 2 bánh", "C. 3 bánh", "D. 4 bánh"], ans: 1 }
       ],
       [
-        { q: "Chặng 7: Đâu là kho báu lớn nhất?", opts: ["A. Vàng", "B. Kim cương", "C. Tri thức", "D. Tiền bạc"], ans: 2 },
+        { q: "Chặng 7: This is the first time I ________ to Da Nang", opts: ["A. go", "B. went", "C. have been", "D. am going"], ans: 2 },
         { q: "Chặng 7 (Đổi câu): 10 - 3 bằng bao nhiêu?", opts: ["A. 5", "B. 6", "C. 7", "D. 8"], ans: 2 },
         { q: "Chặng 7 (Đổi câu): Bạn đã sẵn sàng mở kho báu chưa?", opts: ["A. Chưa", "B. Sẵn sàng", "C. Không", "D. Bỏ cuộc"], ans: 1 }
       ]
